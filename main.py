@@ -1,10 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from can_buffer import can_buffer
-import can
-import serial
-from can.interface import Bus
+
 from time import sleep
+
+import can
+from can.interface import Bus
+
+import serial
+
+from can_buffer import can_buffer
 
 port = "/dev/ttyUSB0"
 

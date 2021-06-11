@@ -1,16 +1,24 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-import can as can
+import can
+from can.interface import Bus
+
 import serial
 
 from myFrames import rx_machiery
 
 port = "/dev/ttyUSB0"
 
+can.rc['interface'] = 'socketcan_native'
+can.rc['channel'] = 'vcan0'
+
+my_bus = Bus()
+
 
 def my_on_rx(frame: can.Message):
     print("WYSOKO")
     print(frame)
+    my_bus.send(msg=frame)
 
 
 m = rx_machiery(my_on_rx)
@@ -26,6 +34,7 @@ def tick():
     else:
         # there's byte of payload
         m.put_data(msg)
+
 
 while 1:
     tick()
