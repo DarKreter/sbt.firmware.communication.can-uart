@@ -18,5 +18,9 @@ class can_buffer:
             b += bytearray(frame_bytes)
         return b
 
-    def append_frame(self, msg: can.Message):
-        self.storage[msg.arbitration_id] = msg
+    def append_frame(self, msg: can.Message): 
+        if msg.arbitration_id > 0x10:
+            self.storage[msg.arbitration_id] = msg
+        else:
+            self.storage[msg.data[2]] = msg
+        
