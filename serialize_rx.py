@@ -7,10 +7,23 @@ import serial
 
 from myFrames import rx_machiery
 
-port = "/dev/ttyUSB0"
+
+import sys
+if len(sys.argv) != 3:
+    print(sys.argv[0]+' canIf uartIf')
+    sys.exit('')
+
+can_interface = sys.argv[1]
+uart_interface = sys.argv[2]
+
+print("CAN:  {}".format(can_interface))
+print("UART: {}".format(uart_interface))
+
+
+port = uart_interface
 
 can.rc['interface'] = 'socketcan_native'
-can.rc['channel'] = 'vcan0'
+can.rc['channel'] = can_interface
 
 my_bus = Bus()
 
