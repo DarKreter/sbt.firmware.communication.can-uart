@@ -24,7 +24,6 @@ print("UART: {}".format(uart_interface))
 port = uart_interface
 
 can.rc['interface'] = 'socketcan_native'
-# can.rc['channel'] = 'vcan0'
 can.rc['channel'] = can_interface
 
 
@@ -41,7 +40,6 @@ my_bus = Bus()
 notifier = can.Notifier(my_bus, [rx_fcn], 1)
 
 while 1:
-    #  printF()
     serialized = my_buf.storage_to_serialized_data()
     my_buf.clean()
     if len(serialized) == 0:
