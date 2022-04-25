@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 from __headers__ import *
-from myFrames import *
 
 # Call parameters
 parser = argparse.ArgumentParser()
@@ -22,8 +21,6 @@ my_bus = Bus()
 # Serial init
 portObj = serial.Serial(port=args.uart_interface, baudrate=115200, timeout=0.3)
 portObj.flush()
-
-my_buf = can_buffer()
 
 print("GO!")
 
