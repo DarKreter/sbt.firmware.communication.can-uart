@@ -33,7 +33,6 @@ print("GO")
 
 while 1:
     msg = portObj.read(1)
-    print(msg)
     if len(msg) == 0:
         continue
     else:

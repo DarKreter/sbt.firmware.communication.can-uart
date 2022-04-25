@@ -31,7 +31,7 @@ class rx_machiery:
     def _put_byte(self, rx_byte: int):
         # print(rx_byte)
         # look for starting combination
-        if rx_byte == ord('x'):
+        if rx_byte == ord('x') and self.is_start is False:
             self.start_counter += 1
             # print("start: {}".format(self.start_counter))
             if self.start_counter == 6:
