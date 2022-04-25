@@ -3,11 +3,12 @@
 import can
 from can.interface import Bus
 
-import serial
+import pyserial
 
 from myFrames import rx_machiery
 
 
+# ARGV handling
 import sys
 if len(sys.argv) != 3:
     print(sys.argv[0]+' canIf uartIf')
@@ -22,6 +23,7 @@ print("UART: {}".format(uart_interface))
 
 port = uart_interface
 
+# can init
 can.rc['interface'] = 'socketcan_native'
 can.rc['channel'] = can_interface
 
@@ -36,6 +38,7 @@ def my_on_rx(frame: can.Message):
 
 m = rx_machiery(my_on_rx)
 
+# serial init
 portObj = serial.Serial(port=port, baudrate=115200, timeout=0.3)
 portObj.flush()
 
