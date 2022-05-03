@@ -16,17 +16,16 @@ can.rc['channel'] = args.can_socket
 can.rc['bitrate'] = 250000
 my_bus = Bus()
 
-
 def my_on_rx(frame: can.Message):
-    print("WYSOKO")
-    print(frame)
+    print("Received frame:")
+    print("{}#{}".format(frame.arbitration_id, frame.data))
     my_bus.send(msg=frame)
+    
+m = rx_machinery(my_on_rx)
 
-
-m = rx_machiery(my_on_rx)
 
 # Serial init
-portObj = serial.Serial(port=args.uart_interface, baudrate=115200, timeout=0.3)
+portObj = serial.Serial(port=args.uart_interface, baudrate=115200, timeout=0.5)
 portObj.flush()
 
 print("GO")
