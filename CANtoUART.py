@@ -19,7 +19,7 @@ my_bus = Bus()
 
 
 # Serial init
-portObj = serial.Serial(port=args.uart_interface, baudrate=115200, timeout=0.3)
+portObj = serial.Serial(port=args.uart_interface, baudrate=115200, timeout=0.5)
 portObj.flush()
 
 print("GO!")
