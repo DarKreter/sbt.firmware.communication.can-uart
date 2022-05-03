@@ -1,6 +1,7 @@
 
 from can_bytes_converter import *
 
+
 class rx_machiery:
     def __init__(self, on_rx):
         self.on_rx = on_rx
@@ -11,6 +12,7 @@ class rx_machiery:
         self.end_counter = 0
         self.frame = bytearray()
         self.is_start = False
+        self.escape_byte_encounter = False
 
     def _append_byte(self, rx_byte):
         self.frame.append(rx_byte)
@@ -31,25 +33,33 @@ class rx_machiery:
     def _put_byte(self, rx_byte: int):
         # print(rx_byte)
         # look for starting combination
-        if rx_byte == ord('x') and self.is_start is False:
+        if rx_byte == ord('x') and self.escape_byte_encounter == False:
+            self.is_start = False
             self.start_counter += 1
             # print("start: {}".format(self.start_counter))
-            if self.start_counter == 6:
+            if self.start_counter == 3:
                 self._reset()
                 self.is_start = True
-                for i in range(6):
+                for i in range(3):
                     self._append_byte(ord('x'))
             return
         self.start_counter = 0
 
+        # Wait till header sentence
         if self.is_start is False:
             return
+
+        if self.escape_byte_encounter == True:
+            self.escape_byte_encounter = False
+
+        if rx_byte == ord('\\') and self.escape_byte_encounter == False:
+            self.escape_byte_encounter = True
 
         self._append_byte(rx_byte)
 
         if rx_byte == ord('y'):
             self.end_counter += 1
-            if self.end_counter == 6:
+            if self.end_counter == 3:
                 self._whole_frame()
                 self._reset()
             return
