@@ -6,8 +6,8 @@ from time import sleep
 from rx_machinery import rx_machinery
 
 
-def my_on_rx(id, payload):
-    print("\tReceived:\t{}#{}".format(id, bytes(payload)))
+def my_on_rx(frame: can.Message):
+    print("\tReceived:\t{}#{}".format(frame.arbitration_id, frame.data))
     
 
 

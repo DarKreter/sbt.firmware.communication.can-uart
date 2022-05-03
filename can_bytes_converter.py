@@ -22,8 +22,8 @@ def id_payload_to_bytes(extID: int, payload: bytes) -> bytes:
     return byt_out
 
 
-# def can_frame_to_bytes(frame_can: can.Message) -> bytes:
-#     return id_payload_to_bytes(frame_can.arbitration_id, frame_can.data)
+def can_frame_to_bytes(frame_can: can.Message) -> bytes:
+    return id_payload_to_bytes(frame_can.arbitration_id, frame_can.data)
 
 
 def bytes_to_id_payload(frame_bytes: bytes):
@@ -82,7 +82,7 @@ def bytes_to_id_payload(frame_bytes: bytes):
     return rx_id, rx_data
 
 
-# def bytes_to_can_frame(frame_bytes: bytes) -> can.Message:
-#     rx_id, rx_data = bytes_to_id_payload(frame_bytes)
+def bytes_to_can_frame(frame_bytes: bytes) -> can.Message:
+    rx_id, rx_data = bytes_to_id_payload(frame_bytes)
 
-#     return can.Message(arbitration_id=rx_id, data=rx_data)
+    return can.Message(arbitration_id=rx_id, data=rx_data)

@@ -1,4 +1,5 @@
 from can_bytes_converter import *
+import can
 
 
 class rx_machinery:
@@ -19,13 +20,13 @@ class rx_machinery:
     def _whole_frame(self):
         if self.on_rx is not None:
             # try:
-            id, payload = bytes_to_id_payload(bytes(self.frame))
+            frame = bytes_to_can_frame(bytes(self.frame))
             # except ValueError as e:
             #     print("ERROR!!!")
             #     print(e)
             #     Raise e
             #     return
-            self.on_rx(id, payload)
+            self.on_rx(frame)
 
     def _put_byte(self, rx_byte: int):
         # If last one was not escape byte and current is from start sentence do this
@@ -44,7 +45,6 @@ class rx_machinery:
         # print(rx_byte)
         # Wait till header sentence
         if self.is_start is False:
-            print("A")
             return
 
         if self.escape_byte_encounter == True:
