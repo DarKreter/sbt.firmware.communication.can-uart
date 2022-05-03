@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+from shutil import ExecError
 from __headers__ import *
 
 class Direction(Enum):
@@ -37,22 +38,32 @@ portObj.flush()
 
 def Uart2Can():
     while 1:
-        msg = portObj.read(1)
-        if len(msg) == 0:
-            continue
-        else:
-            # there's byte of payload
-            m.put_data(msg)
+        try:
+            msg = portObj.read(1)
+            if len(msg) == 0:
+                continue
+            else:
+                # there's byte of payload
+                m.put_data(msg)
+        except Exception as e:
+            print("Error!!!")
+            print(e)
 
 
 def Can2Uart():
     while 1:
         for msg in my_bus:
-            bytes = can_frame_to_bytes(msg)
+            try:
+                bytes = can_frame_to_bytes(msg)
 
-            print("gonna send!")
-            print(bytes)
-            portObj.write(bytes)
+                print("gonna send!")
+                print(bytes)
+                portObj.write(bytes)
+            except Exception as e:
+                print("Unknown frame: {}#{}".format(msg.arbitration_id, msg.data))
+                print("Error: {}".format(e))
+                print()
+
             
             
 print("GO!")
