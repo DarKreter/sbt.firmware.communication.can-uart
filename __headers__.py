@@ -5,3 +5,5 @@ from can.interface import Bus
 import serial
 from can_bytes_converter import *
 from rx_machinery import rx_machinery
+from enum import Enum
+import threading
