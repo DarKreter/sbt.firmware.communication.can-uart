@@ -1,8 +1,7 @@
-
 from can_bytes_converter import *
 
 
-class rx_machiery:
+class rx_machinery:
     def __init__(self, on_rx):
         self.on_rx = on_rx
         self._reset()
@@ -19,24 +18,22 @@ class rx_machiery:
 
     def _whole_frame(self):
         if self.on_rx is not None:
-            try:
-                frame = bytes_to_can_frame(bytes(self.frame))
-            except ValueError as e:
-                print("ERROR!!!")
-                print(e)
-                return
-            self.on_rx(frame)
-
-    def start_end_rx(self, frame_bytes: bytes):
-        pass
+            # try:
+            id, payload = bytes_to_id_payload(bytes(self.frame))
+            # except ValueError as e:
+            #     print("ERROR!!!")
+            #     print(e)
+            #     Raise e
+            #     return
+            self.on_rx(id, payload)
 
     def _put_byte(self, rx_byte: int):
-        # print(rx_byte)
-        # look for starting combination
+        # If last one was not escape byte and current is from start sentence do this
+        # print("{} ".format(rx_byte), end='')
         if rx_byte == ord('x') and self.escape_byte_encounter == False:
             self.is_start = False
             self.start_counter += 1
-            # print("start: {}".format(self.start_counter))
+
             if self.start_counter == 3:
                 self._reset()
                 self.is_start = True
@@ -44,16 +41,23 @@ class rx_machiery:
                     self._append_byte(ord('x'))
             return
         self.start_counter = 0
-
+        # print(rx_byte)
         # Wait till header sentence
         if self.is_start is False:
+            print("A")
             return
 
         if self.escape_byte_encounter == True:
+            if rx_byte != ord('\\') and rx_byte != ord('x') and rx_byte != ord('y'):
+                # escape byte before unexpected byte
+                self._reset()
+                return
             self.escape_byte_encounter = False
-
-        if rx_byte == ord('\\') and self.escape_byte_encounter == False:
+           
+        # Escape byte detected
+        elif rx_byte == ord('\\') and self.escape_byte_encounter == False:
             self.escape_byte_encounter = True
+
 
         self._append_byte(rx_byte)
 
