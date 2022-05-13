@@ -31,15 +31,15 @@ class rx_machinery:
     def _put_byte(self, rx_byte: int):
         # If last one was not escape byte and current is from start sentence do this
         # print("{} ".format(rx_byte), end='')
-        if rx_byte == ord('x') and self.escape_byte_encounter == False:
+        if rx_byte == ord(start_byte) and self.escape_byte_encounter == False:
             self.is_start = False
             self.start_counter += 1
 
-            if self.start_counter == 3:
+            if self.start_counter == start_sequence_length:
                 self._reset()
                 self.is_start = True
-                for i in range(3):
-                    self._append_byte(ord('x'))
+                for i in range(start_sequence_length):
+                    self._append_byte(ord(start_byte))
             return
         self.start_counter = 0
         # print(rx_byte)
@@ -48,22 +48,22 @@ class rx_machinery:
             return
 
         if self.escape_byte_encounter == True:
-            if rx_byte != ord('\\') and rx_byte != ord('x') and rx_byte != ord('y'):
+            if rx_byte != ord(escape_byte) and rx_byte != ord(start_byte) and rx_byte != ord(end_byte):
                 # escape byte before unexpected byte
                 self._reset()
                 return
             self.escape_byte_encounter = False
            
         # Escape byte detected
-        elif rx_byte == ord('\\') and self.escape_byte_encounter == False:
+        elif rx_byte == ord(escape_byte) and self.escape_byte_encounter == False:
             self.escape_byte_encounter = True
 
 
         self._append_byte(rx_byte)
 
-        if rx_byte == ord('y'):
+        if rx_byte == ord(escape_byte):
             self.end_counter += 1
-            if self.end_counter == 3:
+            if self.end_counter == end_sequence_length:
                 self._whole_frame()
                 self._reset()
             return

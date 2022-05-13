@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from shutil import ExecError
 from __headers__ import *
+from can_bytes_converter import *
+from rx_machinery import rx_machinery
 
 class Direction(Enum):
     can2uart = 'can2uart'
@@ -18,10 +19,11 @@ parser.add_argument("--direction", type=Direction, choices=list(Direction), defa
                     help="direction of communication: \"can2uart\", \"uart2can\" or \"bidirectional\"")
 args = parser.parse_args()
 
+
 # Init can socket
 can.rc['interface'] = 'socketcan'
 can.rc['channel'] = args.can_socket
-can.rc['bitrate'] = 250000
+can.rc['bitrate'] = can_baudrate
 my_bus = Bus()
 
 def my_on_rx(frame: can.Message):

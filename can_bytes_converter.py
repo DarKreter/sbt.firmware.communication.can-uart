@@ -1,5 +1,4 @@
-import can
-import crc16
+from __headers__ import *
 
 
 def id_payload_to_bytes(extID: int, payload: bytes) -> bytes:
@@ -14,11 +13,11 @@ def id_payload_to_bytes(extID: int, payload: bytes) -> bytes:
     # encode escape bytes
     byt_inside_with_esc = bytearray()
     for byte in byt_inside:
-        if byte == ord('x') or byte == ord('y') or byte == ord('\\'):
-            byt_inside_with_esc.append(ord('\\'))
+        if byte == ord(start_byte) or byte == ord(end_byte) or byte == ord(escape_byte):
+            byt_inside_with_esc.append(ord(escape_byte))
         byt_inside_with_esc.append(byte)
 
-    byt_out = b"xxx" + byt_inside_with_esc + b"yyy"
+    byt_out = start_sequence_bytes  + byt_inside_with_esc + end_sequence_bytes
     return byt_out
 
 
@@ -29,31 +28,31 @@ def can_frame_to_bytes(frame_can: can.Message) -> bytes:
 def bytes_to_id_payload(frame_bytes: bytes):
     # print(frame_bytes)
     # check header
-    if frame_bytes[0:3] != b'xxx':
+    if frame_bytes[0:start_sequence_length] != start_sequence_bytes:
         raise ValueError("invalid start")
 
     # check footer
-    if frame_bytes[-3:] != b'yyy':
+    if frame_bytes[-end_sequence_length:] != end_sequence_bytes:
         raise ValueError("invalid end")
 
     # cut start and end
-    frame_bytes = frame_bytes[3:-3]
+    frame_bytes = frame_bytes[start_sequence_length:-end_sequence_length]
 
     # cut escape bytes
     frame_content = bytearray()
     escape_byte = False
     # Go through all bytes in payload
     for byte in frame_bytes:
-        # If previous byte was not escape byte and current one is equal to '\'
+        # If previous byte was not escape byte and current one is equal to escape_byte
         # we mark escape byte flag and dont add byte to frame_content
-        if byte == ord('\\') and escape_byte == False:
+        if byte == ord(escape_byte) and escape_byte == False:
             escape_byte = True
 
         # If previous byte was escape byte
         elif escape_byte == True:
-            # Only x, y or \ is preceded by escape byte
-            if byte != ord('x') and byte != ord('y') and byte != ord('\\'):
-                raise ValueError("Escape byte before not x, y nor \\")
+            # Only start_byte, end_byte or escape_byte is preceded by escape byte
+            if byte != ord(start_byte) and byte != ord(end_byte) and byte != ord(escape_byte):
+                raise ValueError("Escape byte before not {}, {} nor {}".format(start_byte, end_byte, escape_byte))
             # Clear flag
             escape_byte = False
             # Add byte to frame_content
