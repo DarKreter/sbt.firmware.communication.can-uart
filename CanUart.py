@@ -64,17 +64,19 @@ def Can2Uart():
                 print("Error: {}".format(e))
                 print()
 
-            
-            
-print("GO!")
+
+threads = []
 
 if args.direction == Direction.bidirectional or args.direction == Direction.uart2can:
-    x = threading.Thread(target=Uart2Can)
-    x.start()
+    threads.append(threading.Thread(target=Uart2Can))
     
 if args.direction == Direction.bidirectional or args.direction == Direction.can2uart:
-    y = threading.Thread(target=Can2Uart)
-    y.start()
+    threads.append(threading.Thread(target=Can2Uart))
     
-while 1:
-    x.join()
+print("GO!")
+
+for thread in threads:
+    thread.start()
+    
+for thread in threads:
+    thread.join()
