@@ -76,7 +76,5 @@ if args.direction == Direction.bidirectional or args.direction == Direction.can2
     y = threading.Thread(target=Can2Uart)
     y.start()
     
-
-import time
 while 1:
-    time.sleep(1)
+    x.join()
